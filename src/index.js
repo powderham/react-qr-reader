@@ -7,15 +7,25 @@ const havePropsChanged = require('./havePropsChanged')
 // Require adapter to support older browser implementations
 require('webrtc-adapter')
 
-// Inline worker.js as a string value of workerBlob.
-const workerBlob = new Blob([__inline('../lib/worker.js')], {
-  type: 'application/javascript',
-})
+
+const serverSide = function(){
+  try {
+    return !(document !== undefined)
+  } catch(e) {
+    return true;
+  }
+}
 
 // Props that are allowed to change dynamicly
 const propsKeys = ['delay', 'legacyMode', 'facingMode']
 
 module.exports = class Reader extends Component {
+  if (serverSide){return};
+  // Inline worker.js as a string value of workerBlob.
+  const workerBlob = new Blob([__inline('../lib/worker.js')], {
+    type: 'application/javascript',
+  })
+
   static propTypes = {
     onScan: PropTypes.func.isRequired,
     onError: PropTypes.func.isRequired,
