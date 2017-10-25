@@ -8,21 +8,25 @@ const havePropsChanged = require('./havePropsChanged')
 require('webrtc-adapter')
 
 
-const serverSide = function(){
-  try {
-    return !(document !== undefined)
-  } catch(e) {
-    return true;
-  }
-}
 
 // Props that are allowed to change dynamicly
 const propsKeys = ['delay', 'legacyMode', 'facingMode']
 
 module.exports = class Reader extends Component {
-  if (serverSide){return};
+  render() {
+    const serverSide = () => {
+      try {
+        return !(document !== undefined)
+      } catch(e) {
+        return true
+      }
+    }
+    if (serverSide) {
+      return(null)
+    }
+  }
   // Inline worker.js as a string value of workerBlob.
-  const workerBlob = new Blob([__inline('../lib/worker.js')], {
+  static workerBlob = new Blob([__inline('../lib/worker.js')], {
     type: 'application/javascript',
   })
 
